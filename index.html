@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio Allocation Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: white;
+        }
+        input[type="number"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+            background-color: #333333;
+            color: white;
+        }
+        button[type="button"] {
+            background-color: #800080;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button[type="button"]:hover {
+            background-color: #4B0082;
+        }
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 60vw;
+            margin: 0 auto;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            color: white;
+        }
+        th {
+            background-color: #800080;
+            color: white;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .allocation-row {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .allocation-amount {
+            display: flex;
+            align-items: center;
+        }
+
+        .allocation-title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: -20px;
+            color: white;
+        }
+
+        .allocation-bar {
+            width: 0%;
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+
+        #btc-bar {
+            background-color: teal;
+        }
+
+        #eth-bar {
+            background-color: orange;
+        }
+
+        #ltc-bar {
+            background-color: pink;
+        }
+
+        #xrp-bar {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Portfolio Allocation Calculator</h1>
+    <form>
+        <label for="risk">Risk Tolerance:</label>
+        <input type="number" id="risk" name="risk" min="1" max="10"step="1" required>
+        <div class="allocation-row">
+          <div class="allocation-title">Bitcoin</div>
+          <div class="allocation-amount">
+              <input type="number" id="btc-amount" name="btc-amount" min="0" step="0.01" placeholder="0.00">
+              <div class="allocation-bar" id="btc-bar"></div>
+          </div>
+      </div>
+  
+      <div class="allocation-row">
+          <div class="allocation-title">Ethereum</div>
+          <div class="allocation-amount">
+              <input type="number" id="eth-amount" name="eth-amount" min="0" step="0.01" placeholder="0.00">
+              <div class="allocation-bar" id="eth-bar"></div>
+          </div>
+      </div>
+  
+      <div class="allocation-row">
+          <div class="allocation-title">Litecoin</div>
+          <div class="allocation-amount">
+              <input type="number" id="ltc-amount" name="ltc-amount" min="0" step="0.01" placeholder="0.00">
+              <div class="allocation-bar" id="ltc-bar"></div>
+          </div>
+      </div>
+  
+      <div class="allocation-row">
+          <div class="allocation-title">XRP</div>
+          <div class="allocation-amount">
+              <input type="number" id="xrp-amount" name="xrp-amount" min="0" step="0.01" placeholder="0.00">
+              <div class="allocation-bar" id="xrp-bar"></div>
+          </div>
+      </div>
+  
+      <button type="button" id="calculate-btn">Calculate</button>
+  </form>
+  
+  <table id="result-table">
+      <thead>
+          <tr>
+              <th>Asset</th>
+              <th>Allocation %</th>
+              <th>Allocation Amount</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr id="btc-row">
+              <td>Bitcoin</td>
+              <td id="btc-allocation"></td>
+              <td id="btc-amount-result"></td>
+          </tr>
+          <tr id="eth-row">
+              <td>Ethereum</td>
+              <td id="eth-allocation"></td>
+              <td id="eth-amount-result"></td>
+          </tr>
+          <tr id="ltc-row">
+              <td>Litecoin</td>
+              <td id="ltc-allocation"></td>
+              <td id="ltc-amount-result"></td>
+          </tr>
+          <tr id="xrp-row">
+              <td>XRP</td>
+              <td id="xrp-allocation"></td>
+              <td id="xrp-amount-result"></td>
+          </tr>
+      </tbody>
+  </table>
+  
+  <script>
+  function calculateAllocations() {
+    // Retrieve user inputs
+    const riskValue = parseFloat(document.getElementById('risk-value').value);
+    const cashAmount = parseFloat(document.getElementById('cash-amount').value);
+  
+    // Check if user inputs are valid
+    if (isNaN(riskValue) || isNaN(cashAmount)) {
+      alert('Please enter valid inputs.');
+      return;
+    }
+  
+    // Calculate portfolio allocation percentage
+    let portfolioAllocation;
+    if (riskValue >= 0 && riskValue <= 0.15) {
+      portfolioAllocation = 1 * cashAmount;
+    } else if (riskValue > 0.15 && riskValue <= 0.25) {
+      portfolioAllocation = 0.35 * cashAmount;
+    } else if (riskValue > 0.25 && riskValue <= 0.35) {
+      portfolioAllocation = 0.2 * cashAmount;
+    } else {
+      portfolioAllocation = 0 * cashAmount;
+    }
+  
+    // Calculate allocation amounts
+    const btcAllocation = (0.4 * portfolioAllocation).toFixed(2);
+    const ethAllocation = (0.25 * portfolioAllocation).toFixed(2);
+    const ltcAllocation = (0.20 * portfolioAllocation).toFixed(2);
+    const xrpAllocation = (0.15 * portfolioAllocation).toFixed(2);
+  
+    // Display allocation percentages
+    let btcAllocationPercentage = 0;
+    let ethAllocationPercentage = 0;
+    let ltcAllocationPercentage = 0;
+    let xrpAllocationPercentage = 0;
+  
+    const interval = setInterval(() => {
+      if (btcAllocationPercentage < (btcAllocation / cashAmount * 100)) {
+        btcAllocationPercentage++;
+        document.getElementById('btc-allocation').textContent = btcAllocationPercentage.toFixed(2) + '%';
+      }
+      if (ethAllocationPercentage < (ethAllocation / cashAmount * 100)) {
+        ethAllocationPercentage++;
+        document.getElementById('eth-allocation').textContent = ethAllocationPercentage.toFixed(2) + '%';
+      }
+      if (ltcAllocationPercentage < (ltcAllocation / cashAmount * 100)) {
+        ltcAllocationPercentage++;
+        document.getElementById('ltc-allocation').textContent = ltcAllocationPercentage.toFixed(2) + '%';
+      }
+      if (xrpAllocationPercentage < (xrpAllocation / cashAmount * 100)) {
+        xrpAllocationPercentage++;
+        document.getElementById('xrp-allocation').textContent = xrpAllocationPercentage.toFixed(2) + '%';
+      }
+      if (btcAllocationPercentage === (btcAllocation / cashAmount * 100) &&
+          ethAllocationPercentage === (ethAllocation / cashAmount * 100) &&
+          ltcAllocationPercentage === (ltcAllocation / cashAmount * 100) &&
+          xrpAllocationPercentage === (xrpAllocation / cashAmount * 100)) {
+        clearInterval(interval);
+      }
+    }, 10);
+  
+    // Display allocation amounts
+    document.getElementById('btc-amount-row').textContent = '$' + btcAllocation;
+    document.getElementById('eth-amount-row').textContent = '$' + ethAllocation;
+    document.getElementById('ltc-amount-row').textContent = '$' + ltcAllocation;
+    document.getElementById('xrp-amount-row').textContent = '$' + xrpAllocation;
+  
+    // Display total portfolio amount
+    const totalPortfolioAmount = (btcAllocation + ethAllocation + ltcAllocation + xrpAllocation).toFixed(2);
+    document.getElementById('total-amount-row').textContent = '$' + totalPortfolioAmount;
+  </script>
+  </body>
+  </html>
+  

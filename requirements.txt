@@ -1,0 +1,12 @@
+deta==1.1.0
+matplotlib==3.6.3
+mplcursors==0.5.2
+numpy==1.24.1
+pandas==1.5.3
+plotly==5.13.0
+Quandl==3.7.0
+scikit_learn==1.2.1
+streamlit==1.21.0
+streamlit_authenticator==0.2.1
+streamlit_option_menu==0.3.2
+yfinance==0.2.11
