@@ -32,7 +32,7 @@ def crypto():
     df = quandl.get('BCHAIN/MKPRU', api_key='FeqsMXoDZZF_pAxV4kMi').reset_index()
     tlt_data = yf.download('TLT', period='max')['Close'].resample('W').last().dropna()
     oil_data = yf.download('CL=F', period='max')['Close'].resample('W').last().dropna()
-    snp_data = yf.download('^GSPC', period='max')['Close'].resample('W').last().dropna()
+    t10y_data = yf.download('^TNX', period='max')['Close'].resample('W').last().dropna()
 
 
     # Convert dates to datetime object for easy use
@@ -56,18 +56,18 @@ def crypto():
     df['Preavg'] = (np.log(df.Value) - np.log(df['MA'])) * df.index**.395
     tlt_ma = tlt_data.rolling(window=52).mean()
     oil_ma = oil_data.rolling(window=52).mean()
-    snp_ma = snp_data.rolling(window=52).mean()
-    snp_ma.name = 'S&P_MA'
+    t10y_ma = t10y_data.rolling(window=52).mean()
+    t10y_ma.name = '10-Year'
     tlt_ma.name = 'TLT_MA'
     oil_ma.name = 'OIL_MA'
     df = pd.merge(df, tlt_ma, how='left', left_on='Date', right_index=True)
     df = pd.merge(df, oil_ma, how='left', left_on='Date', right_index=True)
-    df = pd.merge(df, snp_ma, how='left', left_on='Date', right_index=True)
+    df = pd.merge(df, t10y_ma, how='left', left_on='Date', right_index=True)
     df['MA'] = df['Value'].rolling(374, min_periods=1).mean().dropna()
     df['TLT_MA'] = df['TLT_MA'].rolling(52, min_periods=1).mean().dropna()
     df['OIL_MA'] = df['OIL_MA'].rolling(52, min_periods=1).mean().dropna()
-    df['S&P_MA'] = df['S&P_MA'].rolling(52, min_periods=1).mean().dropna()
-    df['Preavg'] = (np.log(df.Value) - np.log(df['MA'])) * df.index**.395 - df['TLT_MA'] * -0.02 - df['OIL_MA'] * -0.02 
+    df['10-Year'] = df['10-Year'].rolling(52, min_periods=1).mean().dropna()
+    df['Preavg'] = (np.log(df.Value) - np.log(df['MA'])) * df.index**.395 - df['TLT_MA'] * -0.02 - df['OIL_MA'] * -0.02 - df['10-Year'] * -0.02
 
     # Normalization to 0-1 range
     df['avg'] = (df['Preavg'] - df['Preavg'].cummin()) / (df['Preavg'].cummax() - df['Preavg'].cummin())
