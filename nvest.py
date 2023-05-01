@@ -2,13 +2,15 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import plotly.express as px
 from datetime import date
 from plotly.subplots import make_subplots
 import plotly.express as px
 import plotly.graph_objects as go
 import yfinance as yf
 import numpy as np
+from sklearn import linear_model
+import mplcursors as mplcursors
+import quandl
 
 
 st.set_page_config(layout="wide")
@@ -18,16 +20,6 @@ df = None
 
 # Functions for each of the pages
 def crypto():
-    st.subheader('BTC Risk')
-    from datetime import date
-    import numpy as np
-    import pandas as pd
-    from plotly.subplots import make_subplots
-    import plotly.express as px
-    import plotly.graph_objects as go
-    import quandl
-    import yfinance as yf
-
     # Download historical data from Quandl | BCHAIN/MKPRU is BTC
     df = quandl.get('BCHAIN/MKPRU', api_key='FeqsMXoDZZF_pAxV4kMi').reset_index()
     tlt_data = yf.download('TLT', period='max')['Close'].resample('W').last().dropna()
@@ -133,15 +125,6 @@ def crypto():
     fig.update_layout(width=500, height=500, title={'text': 'Price according to specific risk', 'y': 0.9, 'x': 0.5})
     with st.container():
         st.plotly_chart(fig, use_container_width=True)
-
-    from sklearn import linear_model
-    import pandas as pd
-    import numpy as np
-    import quandl as quandl
-    import plotly.graph_objects as go
-    from plotly.subplots import make_subplots
-    import mplcursors as mplcursors
-
 
     ### Import historical bitcoin price from quandl
     df = quandl.get("BCHAIN/MKPRU", api_key="FYzyusVT61Y4w65nFESX").reset_index()
