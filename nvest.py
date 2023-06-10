@@ -8,8 +8,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import yfinance as yf
 import numpy as np
-from sklearn import linear_model
-import mplcursors as mplcursors
 import quandl
 
 
